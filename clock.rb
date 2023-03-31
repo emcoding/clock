@@ -12,18 +12,16 @@ class Clock
   MINUTES_PER_HOUR = 60
 
   def initialize(hour: 0, minute: 0 )
-    @hour = hour % HOURS_PER_DAY
     @minute = minute.divmod(MINUTES_PER_HOUR)
+    @hour = (hour + @minute&.first) % HOURS_PER_DAY
   end
 
   def to_s
-    puts @minute
-    @hour += @minute.first if @minute.first > 0
     [@hour, @minute.last].map do |part|
       [format('%02d', part)]
     end.join(":")
   end
 
   private
-  attr_reader :hour, :minute
+  # attr_reader :hour, :minute
 end
