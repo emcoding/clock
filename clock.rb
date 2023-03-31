@@ -7,21 +7,56 @@
 # % alleen modulus
 
 class Clock
+  include Comparable
 
   HOURS_PER_DAY = 24
   MINUTES_PER_HOUR = 60
 
   def initialize(hour: 0, minute: 0 )
-    @minute = minute.divmod(MINUTES_PER_HOUR)
-    @hour = (hour + @minute&.first) % HOURS_PER_DAY
+    @hour = hour
+    @minute = minute
   end
 
   def to_s
-    [@hour, @minute.last].map do |part|
-      [format('%02d', part)]
+    time.map do |unit|
+      [format('%02d', unit)] # 08, #00
     end.join(":")
   end
 
+  def +(other)
+    Clock.new(minute: self.minutes + other.minutes).to_s
+  end
+
+  def -(other)
+    Clock.new(minute: self.minutes - other.minutes).to_s
+  end
+
+  def ==(other)
+    self.time == other.time
+  end
+
+  def time
+    hr, min = minutes_to_hourly
+    [hr % HOURS_PER_DAY, min]
+  end
+
+  def minutes
+    @minute + hour_in_minutes # 480
+  end
+
   private
-  # attr_reader :hour, :minute
+
+  def hour_in_minutes
+    @hour * MINUTES_PER_HOUR #480
+  end
+
+
+  def minutes_to_hourly
+    minutes.divmod(MINUTES_PER_HOUR) #[8,0]
+  end
+
+
+
 end
+
+
